@@ -111,30 +111,28 @@ void stringSwapMenu()
     stringSwapper(&strings[str1], &strings[str2]);
 }
 
-void stringBubbler(char** str1, char** str2)
+void stringBubbler(char** str1, char** str2, int char_index)
 {
     char* temp [STRING_MAX_LENGTH];
-    
-    if (*str1[0] < *str2[0])
-    {
-        *temp = *str1;
-        *str1 = *str2;
-        *str2 = *temp;
-    }
-}
 
-void stringBubbleSort()
-{
-    int string_index = 0;
-    int compare_index;
-    
-    while (string_index < string_count)
+    if (char_index > 0)
     {
-        for (compare_index = 0; compare_index < string_count; compare_index++)
+        if (*str1[char_index] < *str2[char_index] && *str1[char_index - 1] == *str2[char_index - 1])
         {
-            stringBubbler(&strings[string_index], &strings[compare_index]);
+            *temp = *str1;
+            *str1 = *str2;
+            *str2 = *temp;
         }
-        string_index++;
+    }
+
+    else
+    {
+        if (*str1[char_index] < *str2[char_index])
+        {
+            *temp = *str1;
+            *str1 = *str2;
+            *str2 = *temp;
+        }
     }
 }
 
@@ -149,6 +147,25 @@ int stringCompare(char* string1, char* string2)
         comparison_char++;
     }
     return 0;
+}
+
+void stringBubbleSort()
+{
+    int string_index = 0;
+    int compare_index = 0;
+    char comp_result;
+
+    while (string_index < string_count)
+    {
+        for (compare_index = 0; compare_index < string_count; compare_index++)
+        {
+            comp_result = stringCompare(strings[string_index], strings[compare_index]);
+
+            if (comp_result < 0)
+                stringSwapper(&strings[string_index], &strings[compare_index]);
+        }
+        string_index++;
+    }
 }
 
 int stringBinarySearch(char* search_string)
@@ -178,7 +195,7 @@ int stringBinarySearch(char* search_string)
                 low = mid + 1;
 
             else
-                high = mid + 1;
+                high = mid - 1;
         }
 
         else if (strings[mid][0] < search_string[0])
@@ -216,34 +233,34 @@ void menu()
     char selection;
     
     printf("-----------------------------\n");
-    printf("Enter A to input a new string,\n");
-    printf("B to list currently saved strings,\n");
-    printf("C to search for a string in the current list (linear),\n");
-    printf("D to swap two strings on the list,\n");
-    printf("E to sort the strings on the list,\n");
-    printf("or F to search for a string in the current list (binary).\n");
+    printf("Enter 1 to input a new string,\n");
+    printf("2 to list currently saved strings,\n");
+    printf("3 to search for a string in the current list (linear),\n");
+    printf("4 to swap two strings on the list,\n");
+    printf("5 to sort the strings on the list,\n");
+    printf("or 6 to search for a string in the current list (binary).\n");
     
-    scanf(" %c", &selection);
-    if (selection == 'A')
+    scanf("%d", &selection);
+    if (selection == 1)
     {
         fflush (stdin);
         stringInput();
     }
-    else if (selection == 'B')
+    else if (selection == 2)
         stringList();
-    else if (selection == 'C')
+    else if (selection == 3)
     {
         fflush (stdin);
         stringLinearSearch();
     }
-    else if (selection == 'D')
+    else if (selection == 4)
     {
         fflush (stdin);
         stringSwapMenu();
     }
-    else if (selection == 'E')
+    else if (selection == 5)
         stringBubbleSort();
-    else if (selection == 'F')
+    else if (selection == 6)
     {
         fflush (stdin);
         stringBinarySearchMenu();
