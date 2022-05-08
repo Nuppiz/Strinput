@@ -228,6 +228,43 @@ void stringBinarySearchMenu()
     }
 }
 
+void stringDelete(int delete_index)
+{
+    int i;
+
+    if (delete_index == string_count)
+    {
+        free(strings[delete_index]);
+        string_count--;
+        strings_capacity--;
+        strings = realloc(strings, sizeof(char*) * strings_capacity);
+    }
+
+    else
+    {
+        for (i = 0; i < string_count; i++)
+        {
+            if (i > delete_index)
+            {
+                stringSwapper(&strings[i], &strings[i - 1]);
+            }
+        }
+        free(strings[string_count]);
+        string_count--;
+        strings_capacity--;
+        strings = realloc(strings, sizeof(char*) * strings_capacity);
+    }
+}
+
+void stringDeleteMenu()
+{
+    int string_index;
+    printf("Enter the index number of the string you wish to delete.\n");
+    scanf("%d", &string_index);
+
+    stringDelete(string_index);
+}
+
 void menu()
 {
     char selection;
@@ -238,7 +275,8 @@ void menu()
     printf("3 to search for a string in the current list (linear),\n");
     printf("4 to swap two strings on the list,\n");
     printf("5 to sort the strings on the list,\n");
-    printf("or 6 to search for a string in the current list (binary).\n");
+    printf("6 to search for a string in the current list (binary),\n");
+    printf("7 to delete a string from the list.\n");
     
     scanf("%d", &selection);
     if (selection == 1)
@@ -265,6 +303,11 @@ void menu()
         fflush (stdin);
         stringBinarySearchMenu();
     }     
+    else if (selection == 7)
+    {
+        fflush (stdin);
+        stringDeleteMenu();
+    }   
 }
 
 int main()
