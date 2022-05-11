@@ -124,7 +124,6 @@ void stringBubbler(char** str1, char** str2, int char_index)
             *str2 = *temp;
         }
     }
-
     else
     {
         if (*str1[char_index] < *str2[char_index])
@@ -190,17 +189,13 @@ int stringBinarySearch(char* search_string)
 
             if (comp_result == 0)
                 return mid;
-            
             else if (comp_result > 0)
                 low = mid + 1;
-
             else
                 high = mid - 1;
         }
-
         else if (strings[mid][0] < search_string[0])
             low = mid + 1;
-
         else
             high = mid - 1;
     }
@@ -220,7 +215,6 @@ void stringBinarySearchMenu()
 
     if (result == FALSE)
         printf("No matching strings found.\n");
-
     else
     {
         printf("Found a result matching the search:\n");
@@ -239,7 +233,6 @@ void stringDelete(int delete_index)
         strings_capacity--;
         strings = realloc(strings, sizeof(char*) * strings_capacity);
     }
-
     else
     {
         for (i = 0; i < string_count; i++)
@@ -265,6 +258,52 @@ void stringDeleteMenu()
     stringDelete(string_index);
 }
 
+int qSortPartition(int low, int high)
+{
+    /* pivot is the value every other value in the array is compared to at the start of the run, it's the last value in the array
+    in this program we're comparing strings, so the pivot is a char pointer */
+    char* pivot = strings[high];
+    /* i points to a value that is considered to be potentially greater than the pivot value */
+    int i = low - 1;
+    /* j is simply a running index number that goes through the entire array (or sub-array) until it reaches the "high" value */
+    int j;
+
+    /* run through the array */
+    for (j = low; j < high; j++)
+    {
+        /* if a value smaller than the pivot is found */
+        if (stringCompare(strings[j], pivot) < 0)
+        {
+            /* 'i' is advanced by one, and the value at that index is swapped with the value at the 'j' index */
+            i++;
+            stringSwapper(&strings[i], &strings[j]);
+        }
+    }
+    /* once the array has been gone through, the current 'i' index (incremented by one) is swapped with the pivot
+    i has to incremented because otherwise the program may try reading memory outside of the array */
+    stringSwapper(&strings[i + 1], &strings[high]);
+
+    /* finally, return the position of the new pivot */
+    return i + 1;
+}
+
+void quickSort(int start, int end)
+{
+    /* partition index is the index in the larger array where it's split in half */
+    int partition_index;
+
+    /* run the loop until both sub-arrays have been fully processed (start and end indexes are the same)*/
+    if (start < end)
+    {
+        /* calculate new partition index */
+        partition_index = qSortPartition(start, end);
+        /* run the sort from the beginning of the array until just before the partition index */
+        quickSort(start, partition_index - 1);
+        /* then the same for values after the partition index */
+        quickSort(partition_index + 1, end);
+    }
+}
+
 void menu()
 {
     char selection;
@@ -274,9 +313,10 @@ void menu()
     printf("2 to list currently saved strings,\n");
     printf("3 to search for a string in the current list (linear),\n");
     printf("4 to swap two strings on the list,\n");
-    printf("5 to sort the strings on the list,\n");
+    printf("5 to bubble sort the strings on the list,\n");
     printf("6 to search for a string in the current list (binary),\n");
-    printf("7 to delete a string from the list.\n");
+    printf("7 to delete a string from the list,\n");
+    printf("8 to quick sort the strings on the list.\n");
     
     scanf("%d", &selection);
     if (selection == 1)
@@ -307,7 +347,15 @@ void menu()
     {
         fflush (stdin);
         stringDeleteMenu();
-    }   
+    }
+    else if (selection == 8)
+    {
+        quickSort(0, string_count);
+    }
+    else
+    {
+        printf("Invalid choice\n");
+    }
 }
 
 int main()
